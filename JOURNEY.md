@@ -1,21 +1,47 @@
-# 🛒 E-commerce Store – Daily Build Journey
+# 🚀 E-commerce Store Project Journey
 
-## Day 1 – Setup & Routing
-✅ Next.js project setup with App Router  
-✅ Tailwind CSS configured and tested  
-✅ Mobile-first responsive product grid  
-✅ Global Navbar implemented  
-✅ Static and dynamic routes created  
+## ✅ Day 1 – Project Setup & Routing
+- Initialized Next.js project using App Router
+- Configured Tailwind CSS
+- Set up global layout and Navbar
+- Practiced routing with multiple pages
+- Verified responsive layout for mobile and desktop
 
-📌 Next: MongoDB + Product APIs
+---
 
-🚀 **Day 2 completed ✅**
+## ✅ Day 2 – Backend & Database Setup
+- Created MongoDB Atlas cluster
+- Connected MongoDB with Mongoose
+- Designed Product schema/model
+- Implemented `/api/products` API route
+- Verified database connection and API responses
+- Debugged connection, environment variables, and network access issues
 
-✅ Setup MongoDB Atlas and database
-✅ Connected MongoDB to Next.js using Mongoose
-✅ Created `/api/products` backend API
-✅ Seeded product data
-✅ Resolved real-world DNS/SRV network issue
-✅ Verified live data fetching
+---
 
-📌 Next: Render products on UI + product detail pages
+## ✅ Day 3 – Product Listing & Product Details
+**Focus:** Frontend ↔ Backend Integration
+
+### Implemented:
+- Fetched product data from `/api/products`
+- Rendered products on Home page
+- Implemented dynamic routing with `/product/[id]`
+- Created `/api/products/[id]` endpoint
+- Validated MongoDB ObjectId
+- Implemented clean error and 404 handling
+- Built Product Details page UI
+- Ensured mobile and desktop responsiveness
+
+### Debugging & Learning:
+- Handled Next.js App Router dynamic params
+- Fixed API vs page routing issues
+- Resolved export/import mismatches
+- Understood Next.js 16 params behavior
+- Learned to ignore non-blocking Turbopack source-map warnings
+
+### Result:
+✅ Product listing working  
+✅ Product detail page working  
+✅ Backend API stable  
+✅ Clean routing and error handling  
+
