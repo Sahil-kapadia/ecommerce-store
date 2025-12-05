@@ -1,15 +1,22 @@
-import Link from "next/link";
-export default function Navbar(){
-    return(
-        <nav className="flex items-center justify-between px-4 py-3 border-b">
-            <Link href="/" className="text-lg font-semibold">
-            Shop
-            </Link>
+"use client";
 
-            <div className="flex gap-4 text-sm md:text-base">
-                <Link href="/cart">Cart</Link>
-                <Link href="/admin">Admin</Link>
-            </div>
-        </nav>
-    );
+import Link from "next/link";
+import { useCart } from "../context/CartContext";
+
+export default function Navbar() {
+  const { cart } = useCart();
+
+  const itemCount = cart.reduce((sum, item) => sum + item.qty, 0);
+
+  return (
+    <nav className="p-4 flex justify-between border-b bg-white sticky top-0">
+      <Link href="/" className="text-xl font-bold">
+        Shop
+      </Link>
+
+      <Link href="/cart" className="text-lg">
+        Cart ({itemCount})
+      </Link>
+    </nav>
+  );
 }

@@ -1,42 +1,18 @@
-import { notFound } from "next/navigation";
+import ProductDetailsClient from "./ProductDetailsClient";
 
-async function getProduct(id) {
+export default async function ProductDetailsPage({ params }) {
+  const { id } = await params;
+
+  // Fetch product
   const res = await fetch(`http://localhost:3000/api/products/${id}`, {
     cache: "no-store",
   });
 
-  if (!res.ok) return null;
-  return res.json();
-}
-
-export default async function ProductDetailsPage({ params }) {
-  // ✅ REQUIRED in Next.js 16
-  const { id } = await params;
-
-  const product = await getProduct(id);
-
-  if (!product) {
-    notFound();
+  if (!res.ok) {
+    return <h1 className="text-center mt-10">Product not found</h1>;
   }
 
-  return (
-    <main className="p-4 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold">{product.name}</h1>
-      <p className="mt-2 text-gray-600">{product.description}</p>
+  const product = await res.json();
 
-      <div className="mt-4 flex justify-between">
-        <span className="text-xl font-semibold">₹ {product.price}</span>
-        <span className="px-3 py-1 border rounded">
-          {product.category || "Uncategorized"}
-        </span>
-      </div>
-
-      <p className="mt-4 text-sm">
-        Status:{" "}
-        <span className="font-semibold">
-          {product.inStock ? "In stock" : "Out of stock"}
-        </span>
-      </p>
-    </main>
-  );
+  return <ProductDetailsClient product={product} />;
 }

@@ -45,3 +45,66 @@
 ✅ Backend API stable  
 ✅ Clean routing and error handling  
 
+✅ Day 4 – Cart System (Full Shopping Cart Functionality)
+
+Focus: Client-side state management + real e-commerce behavior
+
+Implemented:
+
+Created a CartContext using React Context API
+
+Wrapped entire app inside <CartProvider> for global state
+
+Added Add to Cart button on product details page
+
+Displayed total items in cart inside Navbar (Cart (3))
+
+Cart Features Built:
+
+Add product to cart
+
+Merge duplicate items
+
+Quantity system (qty + / qty –)
+
+Remove item from cart
+
+Cart total amount calculation
+
+Clear cart on checkout
+
+UI Improvements:
+
+Built clean and responsive Cart page
+
+Added + / – buttons with real-time updates
+
+Showed individual item prices and quantities
+
+Displayed total cost at bottom
+
+Storage:
+
+Enabled localStorage persistence, so cart stays after refresh
+
+Synced cart state → localStorage automatically
+
+Debugging & Fixes:
+
+Solved "duplicate key" React warning
+
+Converted cart mapping to use index OR unique cartId
+
+Fixed ProductDetails routing and props
+
+Ensured client vs server components are split properly
+
+Removed crashes happening when product was undefined
+
+Result:
+
+✅ Full cart system ready
+✅ Quantity management like Amazon/Flipkart
+✅ Persistent cart
+✅ Product → Cart → Checkout flow established
+✅ End of Day 4 perfectly completed
