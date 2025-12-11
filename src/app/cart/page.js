@@ -1,5 +1,5 @@
 "use client";
-
+import RazorpayCheckoutButton from "@/components/RazorpayCheckoutButton"; 
 import { useCart } from "../../context/CartContext";
 
 export default function CartPage() {
@@ -23,6 +23,8 @@ export default function CartPage() {
           <div>
             <h2 className="font-semibold text-lg">{item.name}</h2>
             <p className="text-gray-600">₹{item.price}</p>
+
+
           </div>
 
           <div className="flex items-center gap-3">
@@ -45,15 +47,11 @@ export default function CartPage() {
       ))}
 
       <div className="mt-6 text-right">
-        <h2 className="text-xl font-bold">Total: ₹{total}</h2>
+  <h2 className="text-xl font-bold">Total: ₹{total}</h2>
 
-        <button
-          onClick={clearCart}
-          className="mt-4 bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800"
-        >
-          Checkout / Clear Cart
-        </button>
-      </div>
+  <RazorpayCheckoutButton cart={cart} total={total} />
+</div>
+
     </main>
   );
 }
