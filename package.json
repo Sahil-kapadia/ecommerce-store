@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@stripe/stripe-js": "^8.5.3",
+    "cloudinary": "^2.8.0",
     "mongodb": "^7.0.0",
     "mongoose": "^9.0.0",
     "next": "16.0.7",

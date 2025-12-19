@@ -6,7 +6,17 @@ export default function ProductDetailsClient({ product }) {
   const { addToCart } = useCart();
 
   return (
-    <main className="p-6">
+    <main className="p-6 max-w-4xl mx-auto">
+      
+      {/* Product Image */}
+      {product.imageUrl && (
+        <img
+          src={product.imageUrl}
+          alt={product.name}
+          className="w-full max-w-md mx-auto rounded-lg mb-6 object-cover"
+        />
+      )}
+
       <h1 className="text-3xl font-bold">{product.name}</h1>
 
       <p className="text-gray-600 mt-2">{product.description}</p>

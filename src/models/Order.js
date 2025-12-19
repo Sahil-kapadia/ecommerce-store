@@ -1,22 +1,33 @@
 import mongoose from "mongoose";
 
-const OrderSchema = new mongoose.Schema({
-  items: [
-    {
-      productId: String,
-      name: String,
-      price: Number,
-      qty: Number,
+const orderSchema = new mongoose.Schema(
+  {
+    razorpayPaymentId: { type: String, required: true },
+    razorpayOrderId: { type: String, required: true },
+    razorpaySignature: { type: String, required: true },
+    amount: { type: Number, required: true },
+
+    products: [
+      {
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+          required: true,
+        },
+        name: String,
+        price: Number,
+        quantity: Number,
+      },
+    ],
+
+    paymentStatus: {
+      type: String,
+      enum: ["paid", "failed"],
+      default: "paid",
     },
-  ],
-  total: Number,
-  currency: { type: String, default: "INR" },
-  razorpayOrderId: String,
-  razorpayPaymentId: String,
-  customerEmail: { type: String, default: null },
-  status: { type: String, default: "pending" }, // pending, paid, shipped
-  createdAt: { type: Date, default: Date.now },
-});
+  },
+  { timestamps: true }
+);
 
 export default mongoose.models.Order ||
-  mongoose.model("Order", OrderSchema);
+  mongoose.model("Order", orderSchema);

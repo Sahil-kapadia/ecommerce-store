@@ -1,7 +1,11 @@
 "use client";
 
-export default function RazorpayCheckout({ amount }) {
+import { useRouter } from "next/navigation";
 
+export default function RazorpayCheckout({ cartItems, totalAmount }) {
+  const router = useRouter();
+
+  // Load Razorpay script dynamically
   function loadRazorpay(src) {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -13,40 +17,82 @@ export default function RazorpayCheckout({ amount }) {
   }
 
   async function handlePayment() {
-    const res = await loadRazorpay("https://checkout.razorpay.com/v1/checkout.js");
+    // STEP 1: Load Razorpay SDK
+    const isLoaded = await loadRazorpay(
+      "https://checkout.razorpay.com/v1/checkout.js"
+    );
 
-    if (!res) {
+    if (!isLoaded) {
       alert("Razorpay SDK failed to load");
       return;
     }
 
-    // 1. Create order on backend
+    // STEP 2: Create Razorpay order from backend
     const orderRes = await fetch("/api/razorpay", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount, receipt: "order_123" }),
+      body: JSON.stringify({
+        amount: totalAmount,
+        receipt: "receipt_" + Date.now(),
+      }),
     });
+
+    if (!orderRes.ok) {
+      alert("Failed to create Razorpay order");
+      return;
+    }
 
     const order = await orderRes.json();
 
-    // 2. Open Razorpay popup
+    // STEP 3: Configure Razorpay checkout
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
       amount: order.amount,
-      currency: order.currency,
+      currency: "INR",
       name: "Sahil Store",
-      description: "Test Transaction",
+      description: "Order Payment",
       order_id: order.id,
-      handler: function (response) {
-        window.location.href = "/success";
+
+      handler: async function (response) {
+        try {
+          // STEP 4: Save order AFTER payment success
+          const saveRes = await fetch("/api/orders", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+              amount: totalAmount,
+              products: cartItems,
+            }),
+          });
+
+          if (!saveRes.ok) {
+            throw new Error("Order saving failed");
+          }
+
+          // STEP 5: Redirect ONLY after DB save success
+          router.push("/success");
+        } catch (error) {
+          console.error(error);
+          alert("Payment succeeded but order saving failed");
+        }
       },
+
+      prefill: {
+        name: "Customer",
+        email: "customer@example.com",
+      },
+
       theme: {
-        color: "#3399cc",
+        color: "#000000",
       },
     };
 
-    const rzp = new window.Razorpay(options);
-    rzp.open();
+    // STEP 6: Open Razorpay popup
+    const razorpay = new window.Razorpay(options);
+    razorpay.open();
   }
 
   return (

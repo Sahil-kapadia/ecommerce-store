@@ -1,24 +1,27 @@
 export const dynamic = "force-dynamic";
 import Link from "next/link";
 async function getProducts() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/products`, {
+  const res = await fetch("http://localhost:3000/api/products", {
   cache: "no-store",
 });
 
-  if(!res.ok){
-    throw new Error("Failed to fetch details");
-  }
-  return res.json();
+if (!res.ok) {
+  console.error("Products API failed");
+  return [];
+}
+
+return res.json();
 }
 
 export default async function Home() {
   let products = [];
 
-  try{
-    products = await getProducts();
-  }catch(error){
-    console.error(error);
-  }
+try {
+  products = await getProducts();
+} catch (err) {
+  console.error(err);
+}
+
 
   return(
     <main className="p-4 max-w-6xl mx-auto">
@@ -44,6 +47,11 @@ export default async function Home() {
           key={product._id}
           className="border rounded-lg p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition">
             <div>
+              <img
+  src={product.imageUrl}
+  alt={product.name}
+  className="w-full h-48 object-cover rounded mb-3"
+/>
               <h2 className="font-semibold text-lg">{product.name}</h2>
               <p className="text-gray-600 text-sm mt-1 line-clamp-2">
                 {product.description}

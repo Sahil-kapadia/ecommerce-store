@@ -1,5 +1,5 @@
 "use client";
-import RazorpayCheckoutButton from "@/components/RazorpayCheckoutButton"; 
+import RazorpayCheckout from "@/components/RazorpayCheckout";
 import { useCart } from "../../context/CartContext";
 
 export default function CartPage() {
@@ -49,7 +49,10 @@ export default function CartPage() {
       <div className="mt-6 text-right">
   <h2 className="text-xl font-bold">Total: ₹{total}</h2>
 
-  <RazorpayCheckoutButton cart={cart} total={total} />
+  <RazorpayCheckout
+  cartItems={cart}
+  totalAmount={total}
+/>
 </div>
 
     </main>
