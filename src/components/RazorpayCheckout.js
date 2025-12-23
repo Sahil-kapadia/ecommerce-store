@@ -1,11 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function RazorpayCheckout({ cartItems, totalAmount }) {
   const router = useRouter();
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  // Load Razorpay script dynamically
   function loadRazorpay(src) {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -17,90 +18,123 @@ export default function RazorpayCheckout({ cartItems, totalAmount }) {
   }
 
   async function handlePayment() {
-    // STEP 1: Load Razorpay SDK
-    const isLoaded = await loadRazorpay(
-      "https://checkout.razorpay.com/v1/checkout.js"
-    );
-
-    if (!isLoaded) {
-      alert("Razorpay SDK failed to load");
+    if (!cartItems || cartItems.length === 0) {
+      alert("Your cart is empty");
       return;
     }
 
-    // STEP 2: Create Razorpay order from backend
-    const orderRes = await fetch("/api/razorpay", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        amount: totalAmount,
-        receipt: "receipt_" + Date.now(),
-      }),
-    });
-
-    if (!orderRes.ok) {
-      alert("Failed to create Razorpay order");
+    if (!totalAmount || totalAmount <= 0) {
+      alert("Invalid amount");
       return;
     }
 
-    const order = await orderRes.json();
+    setIsProcessing(true);
 
-    // STEP 3: Configure Razorpay checkout
-    const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: order.amount,
-      currency: "INR",
-      name: "Sahil Store",
-      description: "Order Payment",
-      order_id: order.id,
+    try {
+      // Load Razorpay SDK
+      const isLoaded = await loadRazorpay(
+        "https://checkout.razorpay.com/v1/checkout.js"
+      );
 
-      handler: async function (response) {
-        try {
-          // STEP 4: Save order AFTER payment success
-          const saveRes = await fetch("/api/orders", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_signature: response.razorpay_signature,
-              amount: totalAmount,
-              products: cartItems,
-            }),
-          });
+      if (!isLoaded) {
+        throw new Error("Razorpay SDK failed to load");
+      }
 
-          if (!saveRes.ok) {
-            throw new Error("Order saving failed");
+      // Create Razorpay order
+      const orderRes = await fetch("/api/razorpay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: totalAmount,
+          receipt: "receipt_" + Date.now(),
+        }),
+      });
+
+      if (!orderRes.ok) {
+        throw new Error("Failed to create Razorpay order");
+      }
+
+      const order = await orderRes.json();
+
+      // Configure Razorpay checkout
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: "INR",
+        name: "Sahil Store",
+        description: "Order Payment",
+        order_id: order.id,
+
+        handler: async function (response) {
+          try {
+            // Save order after payment success
+            const saveRes = await fetch("/api/orders", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+                amount: totalAmount,
+                products: cartItems,
+              }),
+            });
+
+            if (!saveRes.ok) {
+              const errorData = await saveRes.json();
+              throw new Error(errorData.message || "Order saving failed");
+            }
+
+            // Redirect after successful order save
+            router.push("/success");
+          } catch (error) {
+            console.error("Order save error:", error);
+            alert("Payment succeeded but order saving failed. Please contact support with your payment ID: " + response.razorpay_payment_id);
+          } finally {
+            setIsProcessing(false);
           }
+        },
 
-          // STEP 5: Redirect ONLY after DB save success
-          router.push("/success");
-        } catch (error) {
-          console.error(error);
-          alert("Payment succeeded but order saving failed");
-        }
-      },
+        modal: {
+          ondismiss: function () {
+            setIsProcessing(false);
+          },
+        },
 
-      prefill: {
-        name: "Customer",
-        email: "customer@example.com",
-      },
+        prefill: {
+          name: "Customer",
+          email: "customer@example.com",
+        },
 
-      theme: {
-        color: "#000000",
-      },
-    };
+        theme: {
+          color: "#000000",
+        },
+      };
 
-    // STEP 6: Open Razorpay popup
-    const razorpay = new window.Razorpay(options);
-    razorpay.open();
+      // Open Razorpay popup
+      const razorpay = new window.Razorpay(options);
+      
+      razorpay.on("payment.failed", function (response) {
+        setIsProcessing(false);
+        console.error("Payment failed:", response.error);
+        alert("Payment failed: " + response.error.description);
+      });
+
+      razorpay.open();
+    } catch (error) {
+      console.error("Payment error:", error);
+      alert(error.message || "Failed to process payment");
+      setIsProcessing(false);
+    }
   }
 
   return (
     <button
       onClick={handlePayment}
-      className="bg-black text-white px-4 py-2 rounded mt-4"
+      disabled={isProcessing}
+      className="flex-1 bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
     >
-      Pay with Razorpay
+      {isProcessing ? "Processing..." : "Proceed to Payment"}
     </button>
   );
 }

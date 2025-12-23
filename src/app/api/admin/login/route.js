@@ -1,22 +1,43 @@
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
-  const { password } = await req.json();
+  try {
+    const { password } = await req.json();
 
-  if (password === process.env.ADMIN_PASSWORD) {
-    const res = NextResponse.json({ success: true });
+    // Validate input
+    if (!password) {
+      return NextResponse.json(
+        { message: "Password is required" },
+        { status: 400 }
+      );
+    }
 
-    // simple auth cookie
-    res.cookies.set("admin-auth", "true", {
-      httpOnly: true,
-      path: "/",
-    });
+    // Check password
+    if (password === process.env.ADMIN_PASSWORD) {
+      const res = NextResponse.json({ success: true });
 
-    return res;
+      // Set secure auth cookie
+      res.cookies.set("admin-auth", "true", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+        maxAge: 60 * 60 * 24, // 24 hours
+      });
+
+      return res;
+    }
+
+    // Invalid password
+    return NextResponse.json(
+      { message: "Invalid password" },
+      { status: 401 }
+    );
+  } catch (error) {
+    console.error("Admin login error:", error);
+    return NextResponse.json(
+      { message: "Server error" },
+      { status: 500 }
+    );
   }
-
-  return NextResponse.json(
-    { message: "Unauthorized" },
-    { status: 401 }
-  );
 }
