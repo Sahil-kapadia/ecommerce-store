@@ -1,202 +1,167 @@
-# 🚀 E-commerce Store — Project Journey
+🛒 Kapadia K Mart — Full-Stack E-commerce Project Journey
+This document tracks the step-by-step development journey of Kapadia K Mart, a full-stack e-commerce web application built using Next.js (App Router), MongoDB, Razorpay, and Cloudinary.
+It highlights architectural decisions, challenges solved, and real-world engineering practices applied throughout the project.
 
-This document tracks the **step-by-step development journey** of a full-stack e-commerce application built using **Next.js (App Router), MongoDB, Razorpay, and Cloudinary**.  
-It highlights technical decisions, challenges solved, and real-world engineering practices applied throughout the project.
+✅ Day 1 — Project Setup & Routing
+Focus: Application foundation and navigation
 
----
+Implemented
+Initialized Next.js (App Router) project
+Configured Tailwind CSS
+Set up global layout and reusable Navbar
+Implemented static and dynamic routing
+Ensured fully responsive UI (mobile & desktop)
 
-## ✅ Day 1 — Project Setup & Routing
+Outcome
+Clean project structure
+Stable routing system
+Responsive baseline UI
 
-**Focus:** Application foundation and navigation
+✅ Day 2 — Backend & Database Setup
+Focus: Database connectivity and API foundation
 
-### Implemented
-- Initialized **Next.js (App Router)** project
-- Configured **Tailwind CSS**
-- Set up global layout and reusable **Navbar**
-- Implemented **static and dynamic routing**
-- Ensured **fully responsive UI** (mobile & desktop)
+Implemented
+Created MongoDB Atlas cluster
+Connected MongoDB using Mongoose
+Designed Product schema for Kapadia K Mart catalog
+Implemented /api/products endpoint
+Verified API responses and database connectivity
+Debugging & Learning
+Fixed .env.local configuration issues
+Resolved MongoDB IP whitelist errors
+Debugged import/export mismatches
+Understood server execution in Next.js App Router
 
-### Outcome
-- Clean project structure
-- Stable routing system
-- Responsive baseline UI
+Outcome
+Backend stabilized
+Database connected successfully
+Product API fully functional
 
----
+✅ Day 3 — Product Listing & Product Details
+Focus: Frontend ↔ Backend integration
 
-## ✅ Day 2 — Backend & Database Setup
+Implemented
+Fetched products from /api/products
+Rendered product grid on Kapadia K Mart Home page
+Implemented dynamic routing /product/[id]
+Built /api/products/[id] endpoint
+Added MongoDB ObjectId validation
+Implemented 404 and error handling
+Built responsive Product Details page
 
-**Focus:** Database connectivity and API foundation
+Outcome
+Product listing works reliably
+Product details page loads correctly
+Clean, error-free routing
 
-### Implemented
-- Created **MongoDB Atlas cluster**
-- Connected MongoDB using **Mongoose**
-- Designed **Product schema**
-- Implemented `/api/products` endpoint
-- Verified API responses and DB connectivity
+✅ Day 4 — Shopping Cart System
+Focus: Client-side state management & real e-commerce behavior
 
-### Debugging & Learning
-- Fixed `.env.local` configuration issues
-- Resolved MongoDB **IP whitelist** errors
-- Debugged import/export mismatches
-- Understood server execution in Next.js App Router
+Implemented
+Global CartContext using React Context API
+Wrapped application with <CartProvider>
+Added Add to Cart functionality
+Live cart item count in Navbar
+Cart Features
+Add & merge duplicate products
+Increase / decrease quantity
+Remove items
+Auto-calculate subtotal and total
+Clear cart after checkout
+Storage
+Cart persisted using localStorage
+Auto-restore cart on refresh
+Synced React state ↔ localStorage
 
-### Outcome
-- Backend stable
-- Database connected
-- Product API functional
+Outcome
+Fully functional, persistent shopping cart
+Smooth and intuitive UX
 
----
+✅ Day 5 — Payments & Order Management
+Focus: Secure payment flow and backend verification
 
-## ✅ Day 3 — Product Listing & Product Details
+💳 Razorpay Integration
+Razorpay Checkout popup
+Backend order creation (/api/razorpay)
+Secure HMAC SHA256 signature verification
+Proper Razorpay test mode handling
+Payment → verification → order save → success flow
 
-**Focus:** Frontend ↔ Backend integration
+📦 Order Management
+Designed Order schema
 
-### Implemented
-- Fetched products from `/api/products`
-- Rendered product grid on Home page
-- Implemented dynamic routing `/product/[id]`
-- Built `/api/products/[id]` endpoint
-- Added MongoDB **ObjectId validation**
-- Implemented **404 and error handling**
-- Built responsive **Product Details page**
+Stored:
+Razorpay Order ID
+Razorpay Payment ID
+Signature
+Amount
+Normalized product data
+Payment & order status
+Orders saved correctly in MongoDB Atlas
 
-### Debugging & Learning
-- Fixed API vs Page route conflicts
-- Understood App Router `params` behavior
-- Debugged data-fetching issues
-- Learned to safely ignore non-blocking source-map warnings
+🛠 Admin Orders Dashboard
+Route: /admin/orders
+View all orders
+Inspect order details, payment status, products, and timestamps
+Sorted by newest first
 
-### Outcome
-- Product listing works
-- Product details page works
-- Clean, error-free routing
+Outcome
+Secure, production-ready payment architecture
+Full admin visibility of orders
 
----
+✅ Day 6 — User Authentication & Role Handling
+Focus: User system & protected flows
 
-## ✅ Day 4 — Cart System (Shopping Cart Functionality)
+Implemented
+User model with roles (user / admin)
+Login and Signup pages
+Authentication using HTTP-only cookies
+Navbar updates dynamically (Login / Logout)
+Protected checkout for logged-in users only
+User-specific order association
 
-**Focus:** Client-side state & real e-commerce behavior
+Outcome
+Functional authentication flow
+Secure session handling
+Clear separation of admin and user responsibilities
 
-### Implemented
-- Created global **CartContext** using React Context API
-- Wrapped app with `<CartProvider>`
-- Added **Add to Cart** functionality
-- Displayed live cart count in Navbar
+✅ Day 7 — Deployment, Data Migration & Production Fixes
+Focus: Real-world deployment and debugging
 
-### Cart Features
-- Add products to cart
-- Merge duplicate items
-- Increase / decrease quantity
-- Remove items
-- Auto-calculate subtotal and total
-- Clear cart after checkout
+Implemented
+Deployed Kapadia K Mart on Vercel
+Configured environment variables on Vercel
+Re-seeded products in production database
 
-### Storage
-- Cart persisted using **localStorage**
-- Auto-loaded cart on refresh
-- Synced React state ↔ localStorage
+Fixed:
+Missing data in production
+Cookie handling differences (local vs prod)
+Infinite render loops
+API JSON parsing edge cases
+Verified payment + order flow in production
 
-### Debugging & Fixes
-- Fixed duplicate React key warnings
-- Prevented crashes when product data was undefined
-- Correct separation of client vs server components
+Outcome
+Fully working production deployment
+Live e-commerce store
+Real-world debugging experience gained
 
-### Outcome
-- Fully functional, persistent shopping cart
-- Smooth, real-time UX
+🏁 Current Project Status
+Fully deployed Kapadia K Mart
+Product catalog, cart, checkout, and orders working
+Secure Razorpay payments
+Admin dashboard for products and orders
+Clean, scalable Next.js App Router architecture
 
----
+🎯 Key Takeaways
+Strong full-stack development skills
+Secure payment verification practices
+Real-world MongoDB data modeling
+Debugging production-level issues
+Deployment-ready engineering mindset
 
-## ✅ Day 5 — Payments & Order Management (Major Milestone)
-
-**Focus:** Secure payment flow and backend verification
-
----
-
-### 💳 Razorpay Payment Integration
-
-### Implemented
-- Razorpay Checkout popup
-- Backend Razorpay order creation (`/api/razorpay`)
-- Secure payment **signature verification**
-- Correct handling of Razorpay **test mode**
-- Payment success → backend save → redirect flow
-
-### Security Practices
-- Used **HMAC SHA256** for signature verification
-- Orders saved **only after verification**
-- No blind trust in frontend data
-
----
-
-### 📦 Order Saving & Database Design
-
-### Implemented
-- Designed **Order schema**
-- Stored:
-  - Razorpay Order ID
-  - Razorpay Payment ID
-  - Razorpay Signature
-  - Amount
-  - Normalized product data
-  - Payment status
-- Orders saved correctly in MongoDB Atlas
-
-### Outcome
-- Payment completes successfully
-- Orders reliably saved
-- Production-correct payment architecture
-
----
-
-### 🛠 Admin Orders Dashboard
-
-**Route:** `/admin/orders`
-
-### Implemented
-- Backend API: `/api/admin/orders`
-- Admin interface to:
-  - View all orders
-  - Inspect Order ID
-  - Amount
-  - Payment status
-  - Products in each order
-  - Created date
-- Orders sorted by latest first
-
-### Outcome
-- Complete admin visibility into orders
-- Demonstrates real-world e-commerce lifecycle
-- Interview-ready feature
-
----
-
-## 🏁 Current Project Status
-
-- Full-stack e-commerce application
-- Secure Razorpay payment integration
-- Orders saved and managed in MongoDB
-- Admin product and order management
-- Clean Next.js App Router architecture
-
----
-
-## 🎯 Key Takeaways
-
-- Strong understanding of **frontend–backend coordination**
-- Secure payment verification practices
-- Real-world database modeling
-- Scalable architecture design
-- Production-grade engineering mindset
-
----
-
-## 🔮 Next Planned Enhancements
-
-- Admin order status updates (shipped / delivered)
-- User authentication & order history
-- Payment failure handling
-- Razorpay webhooks
-- Deployment & production hardening
-
----
+🔮 Future Enhancements
+Order status updates (shipped / delivered)
+Email notifications
+Razorpay webhooks
+Performance optimization
+UI/UX polish
