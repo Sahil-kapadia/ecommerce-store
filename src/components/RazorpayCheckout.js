@@ -18,6 +18,7 @@ export default function RazorpayCheckout({ cartItems, totalAmount }) {
   }
 
   async function handlePayment() {
+    // 🛑 Basic validations
     if (!cartItems || cartItems.length === 0) {
       alert("Your cart is empty");
       return;
@@ -31,7 +32,16 @@ export default function RazorpayCheckout({ cartItems, totalAmount }) {
     setIsProcessing(true);
 
     try {
-      // Load Razorpay SDK
+      // 🔐 LOGIN CHECK (IMPORTANT)
+      const authCheck = await fetch("/api/orders/user");
+      if (authCheck.status === 401) {
+        alert("Please login to continue checkout");
+        router.push("/login");
+        setIsProcessing(false);
+        return;
+      }
+
+      // 🔹 Load Razorpay SDK
       const isLoaded = await loadRazorpay(
         "https://checkout.razorpay.com/v1/checkout.js"
       );
@@ -40,7 +50,7 @@ export default function RazorpayCheckout({ cartItems, totalAmount }) {
         throw new Error("Razorpay SDK failed to load");
       }
 
-      // Create Razorpay order
+      // 🔹 Create Razorpay Order
       const orderRes = await fetch("/api/razorpay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -56,18 +66,18 @@ export default function RazorpayCheckout({ cartItems, totalAmount }) {
 
       const order = await orderRes.json();
 
-      // Configure Razorpay checkout
+      // 🔹 Razorpay Options
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: order.amount,
         currency: "INR",
-        name: "Sahil Store",
-        description: "Order Payment",
+        name: "Kapadia K Mart",
+        description: "Secure Order Payment",
         order_id: order.id,
 
         handler: async function (response) {
           try {
-            // Save order after payment success
+            // 🔹 Save order after successful payment
             const saveRes = await fetch("/api/orders", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -82,14 +92,18 @@ export default function RazorpayCheckout({ cartItems, totalAmount }) {
 
             if (!saveRes.ok) {
               const errorData = await saveRes.json();
-              throw new Error(errorData.message || "Order saving failed");
+              throw new Error(
+                errorData.message || "Order saving failed"
+              );
             }
 
-            // Redirect after successful order save
             router.push("/success");
           } catch (error) {
             console.error("Order save error:", error);
-            alert("Payment succeeded but order saving failed. Please contact support with your payment ID: " + response.razorpay_payment_id);
+            alert(
+              "Payment succeeded but order saving failed.\nPayment ID: " +
+                response.razorpay_payment_id
+            );
           } finally {
             setIsProcessing(false);
           }
@@ -107,16 +121,15 @@ export default function RazorpayCheckout({ cartItems, totalAmount }) {
         },
 
         theme: {
-          color: "#000000",
+          color: "#2563EB",
         },
       };
 
-      // Open Razorpay popup
+      // 🔹 Open Razorpay
       const razorpay = new window.Razorpay(options);
-      
+
       razorpay.on("payment.failed", function (response) {
         setIsProcessing(false);
-        console.error("Payment failed:", response.error);
         alert("Payment failed: " + response.error.description);
       });
 
@@ -132,9 +145,18 @@ export default function RazorpayCheckout({ cartItems, totalAmount }) {
     <button
       onClick={handlePayment}
       disabled={isProcessing}
-      className="flex-1 bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
+      className="
+        flex-1 rounded-xl py-4 text-lg font-semibold text-white
+        bg-blue-600 hover:bg-blue-500
+        disabled:opacity-50 disabled:cursor-not-allowed
+        shadow-[0_0_30px_rgba(59,130,246,0.7)]
+        hover:shadow-[0_0_45px_rgba(59,130,246,0.9)]
+        transition
+      "
     >
-      {isProcessing ? "Processing..." : "Proceed to Payment"}
+      {isProcessing
+        ? "Processing Payment..."
+        : "Proceed to Secure Payment"}
     </button>
   );
 }

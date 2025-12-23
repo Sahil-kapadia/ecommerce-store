@@ -12,7 +12,7 @@ export default function AdminLoginPage() {
 
   async function handleLogin(e) {
     e.preventDefault();
-    
+
     if (!password.trim()) {
       setError("Password is required");
       return;
@@ -34,7 +34,7 @@ export default function AdminLoginPage() {
         const data = await res.json();
         setError(data.message || "Invalid password");
       }
-    } catch (err) {
+    } catch {
       setError("Network error. Please try again.");
     } finally {
       setIsLoading(false);
@@ -42,36 +42,42 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <main className="h-screen flex items-center justify-center bg-gray-50">
-      <form onSubmit={handleLogin} className="border p-6 rounded-lg w-80 bg-white shadow-md">
-        <h1 className="text-xl font-bold mb-4">Admin Login</h1>
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0B1220] to-[#020617] px-4">
+      <form
+        onSubmit={handleLogin}
+        className="w-full max-w-sm rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 p-8 shadow-[0_0_30px_rgba(59,130,246,0.25)]"
+      >
+        <h1 className="text-2xl font-bold text-center text-blue-400 mb-6 tracking-wide">
+          Admin Access
+        </h1>
 
         <label htmlFor="password" className="sr-only">
           Password
         </label>
+
         <input
           id="password"
           type="password"
-          placeholder="Admin password"
-          className="border p-2 w-full mb-2 rounded focus:outline-none focus:ring-2 focus:ring-black"
+          placeholder="Enter admin password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           disabled={isLoading}
           required
+          className="w-full rounded-lg bg-black/40 border border-white/20 px-4 py-3 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3"
         />
 
         {error && (
-          <p className="text-red-600 text-sm mb-4" role="alert">
+          <p className="text-red-400 text-sm mb-4 text-center">
             {error}
           </p>
         )}
 
         <button
           type="submit"
-          className="bg-black text-white w-full py-2 rounded hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
           disabled={isLoading}
+          className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(59,130,246,0.6)]"
         >
-          {isLoading ? "Logging in..." : "Login"}
+          {isLoading ? "Authenticating..." : "Login"}
         </button>
       </form>
     </main>

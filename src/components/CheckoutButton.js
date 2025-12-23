@@ -20,18 +20,13 @@ export default function CheckoutButton({ amount, onSuccess, onError }) {
 
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: amount * 100, // Convert to paise
+      amount: amount * 100,
       currency: "INR",
-      name: "My Store",
-      description: "Order Payment",
+      name: "Kapadia K Mart",
+      description: "Secure Order Payment",
       handler: function (response) {
         setIsProcessing(false);
-        if (onSuccess) {
-          onSuccess(response);
-        } else {
-          alert("Payment Successful!");
-          console.log(response);
-        }
+        onSuccess?.(response);
       },
       modal: {
         ondismiss: function () {
@@ -39,11 +34,11 @@ export default function CheckoutButton({ amount, onSuccess, onError }) {
         },
       },
       prefill: {
-        name: "Customer Name",
+        name: "Customer",
         email: "customer@example.com",
       },
       theme: {
-        color: "#000000",
+        color: "#2563EB",
       },
     };
 
@@ -51,12 +46,9 @@ export default function CheckoutButton({ amount, onSuccess, onError }) {
       const razorpay = new window.Razorpay(options);
       razorpay.on("payment.failed", function (response) {
         setIsProcessing(false);
-        if (onError) {
-          onError(response.error);
-        } else {
-          alert("Payment failed. Please try again.");
-          console.error(response.error);
-        }
+        onError
+          ? onError(response.error)
+          : alert("Payment failed. Please try again.");
       });
       razorpay.open();
     } catch (error) {
@@ -70,9 +62,16 @@ export default function CheckoutButton({ amount, onSuccess, onError }) {
     <button
       onClick={handlePayment}
       disabled={isProcessing}
-      className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
+      className="
+        relative w-full rounded-xl py-4 text-lg font-semibold text-white
+        bg-blue-600 hover:bg-blue-500
+        disabled:opacity-50 disabled:cursor-not-allowed
+        shadow-[0_0_25px_rgba(59,130,246,0.6)]
+        hover:shadow-[0_0_35px_rgba(59,130,246,0.85)]
+        transition
+      "
     >
-      {isProcessing ? "Processing..." : "Pay Now"}
+      {isProcessing ? "Processing Payment..." : "Pay Securely"}
     </button>
   );
 }
