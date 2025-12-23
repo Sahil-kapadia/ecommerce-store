@@ -21,8 +21,8 @@ export default function Navbar() {
   return (
     <nav className="p-4 flex justify-between items-center border-b bg-white">
       <Link href="/" className="flex items-center gap-2">
-        <img src="/logo.png" className="w-8 h-8" />
-        <span className="text-xl font-bold">Kapadia Mart</span>
+        <img src="/logo1.png" className="w-8 h-8" />
+        <span className="text-xl font-bold">Kapadia K Mart</span>
       </Link>
 
       <div className="flex gap-4 items-center">
